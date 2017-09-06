@@ -7,11 +7,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -72,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     которые он с радостью наполнит данными из объекта модели в методе bindCrimе.
     Этот класс используется только адаптером в коде ниже, адаптер дёргает его и поручает
     грязную работу по заполнению виджетов*/
-    private class PersonHolder extends RecyclerView.ViewHolder{
+    private class PersonHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
         private TextView mPersonNameTextView;
         private TextView mPersonAdressTextView;
@@ -80,14 +83,28 @@ public class MainActivity extends AppCompatActivity {
         private TextView mPersonAgeTextView;
         private CloneFactory.Person mPerson;
 
-
         public PersonHolder(View itemView) {
             super(itemView);
             mPersonNameTextView = (TextView) itemView.findViewById(R.id.personNameView);
             mPersonAdressTextView = (TextView) itemView.findViewById(R.id.personAdressView);
             mPersonSexTextView = (TextView) itemView.findViewById(R.id.personSexView);
             mPersonAgeTextView = (TextView) itemView.findViewById(R.id.personAgeView);
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    return false;
+                }
+            });
+
+            itemView.setOnCreateContextMenuListener(this);
         }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View itemView, ContextMenu.ContextMenuInfo menuInfo) {
+            getMenuInflater().inflate(R.menu.menu_edit, menu);
+        }
+
         //Метод, связывающий ранее добытые в конструкторе ссылки с данными модели
         public void bindCrime(CloneFactory.Person person) {
             mPerson = person;

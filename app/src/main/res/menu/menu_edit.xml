@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.dr0gi.example2.MainActivity">
+    <item
+        android:id="@+id/edit_option"
+        android:orderInCategory="100"
+        android:title="@string/edit_option"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/remove_option"
+        android:orderInCategory="101"
+        android:title="@string/remove_option"
+        app:showAsAction="never" />
+</menu>
