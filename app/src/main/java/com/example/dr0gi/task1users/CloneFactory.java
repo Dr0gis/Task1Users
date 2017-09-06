@@ -1,6 +1,7 @@
 package com.example.dr0gi.task1users;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -9,23 +10,21 @@ import java.util.List;
 
 public class CloneFactory {
     private static CloneFactory sCloneFactory;
-    private static List<Person> mPersonList;
+    private static List<User> mUserList;
+    private final int COUNT_CLONE = 10;
 
-
-    public class Person {
+    public class User {
         private String name;
-        private int age;
-        private String adress;
-        private boolean sex;
+        private String surname;
+        private Date birthday;
 
-        public Person() {
+        public User() {
         }
 
-        public Person(String name, int age, String adress, boolean sex) {
+        public User(String name, String surname, Date birthday) {
             this.name = name;
-            this.age = age;
-            this.adress = adress;
-            this.sex = sex;
+            this.birthday = birthday;
+            this.surname = surname;
         }
 
         public String getName() {
@@ -36,46 +35,39 @@ public class CloneFactory {
             this.name = name;
         }
 
-        public int getAge() {
-            return age;
+        public String getSurname() {
+            return surname;
         }
 
-        public void setAge(int age) {
-            this.age = age;
+        public void setSurname(String surname) {
+            this.surname = surname;
         }
 
-        public String getAdress() {
-            return adress;
+        public Date getBirthday() {
+            return birthday;
         }
 
-        public void setAdress(String adress) {
-            this.adress = adress;
-        }
-
-        public boolean isSex() {
-            return sex;
-        }
-
-        public void setSex(boolean sex) {
-            this.sex = sex;
+        public void setBirthday(Date birthday) {
+            this.birthday = birthday;
         }
     }
 
     private CloneFactory() {
-        mPersonList = new ArrayList<>(100);
-        for (int i = 0; i < 100; i++) {
-            if(i % 2 == 0){
-                mPersonList.add(new Person("Иванов Иван клон#"+i, 25, "Москва", true));
-            }else{
-                mPersonList.add(new Person("Петрова Мария клон#"+i, 33, "Санкт-Петербург", false));
+        mUserList = new ArrayList<>(COUNT_CLONE);
+        for (int i = 0; i < COUNT_CLONE; i++) {
+            if(i % 2 == 0) {
+                mUserList.add(new User("John", "Smith " + i, new Date(90, 1, 12)));
+            }
+            else {
+                mUserList.add(new User("Ivan", "Ivanov " + i, new Date(100, 5, 1)));
             }
         }
 
     }
-    public static List<Person> getCloneList() {
+    public static List<User> getCloneList() {
         if(sCloneFactory == null){
             sCloneFactory = new CloneFactory();
         }
-        return mPersonList;
+        return mUserList;
     }
 }

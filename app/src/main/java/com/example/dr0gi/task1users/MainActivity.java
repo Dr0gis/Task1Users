@@ -1,7 +1,5 @@
 package com.example.dr0gi.task1users;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,13 +10,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-
-import static java.security.AccessController.getContext;
 
 /**
  * Created by dr0gi on 05.09.2017.
@@ -40,33 +36,13 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewUsers);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        List<CloneFactory.Person> personList = CloneFactory.getCloneList();
-        mAdapter = new PersonAdapter(personList);
+        List<CloneFactory.User> userList = CloneFactory.getCloneList();
+        mAdapter = new PersonAdapter(userList);
         mRecyclerView.setAdapter(mAdapter);
-
-        /*SQLiteDatabase db = getBaseContext().openOrCreateDatabase("app.db", MODE_PRIVATE, null);
-        db.execSQL("CREATE TABLE IF NOT EXISTS users (name TEXT, age INTEGER)");
-
-        Cursor query = db.rawQuery("SELECT * FROM users;", null);
-
-
-
-        TextView textView = (TextView) findViewById(R.id.textView);
-        if(query.moveToFirst()){
-            do{
-                String name = query.getString(0);
-                int age = query.getInt(1);
-                textView.append("Name: " + name + " Age: " + age + "\n");
-            }
-            while(query.moveToNext());
-        }
-        query.close();
-        db.close();*/
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -77,25 +53,14 @@ public class MainActivity extends AppCompatActivity {
     грязную работу по заполнению виджетов*/
     private class PersonHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
-        private TextView mPersonNameTextView;
-        private TextView mPersonAdressTextView;
-        private TextView mPersonSexTextView;
-        private TextView mPersonAgeTextView;
-        private CloneFactory.Person mPerson;
+        private TextView mUserNameTextView;
+        private TextView mUserAgeTextView;
+        private CloneFactory.User mUser;
 
         public PersonHolder(View itemView) {
             super(itemView);
-            mPersonNameTextView = (TextView) itemView.findViewById(R.id.personNameView);
-            mPersonAdressTextView = (TextView) itemView.findViewById(R.id.personAdressView);
-            mPersonSexTextView = (TextView) itemView.findViewById(R.id.personSexView);
-            mPersonAgeTextView = (TextView) itemView.findViewById(R.id.personAgeView);
-
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    return false;
-                }
-            });
+            mUserNameTextView = (TextView) itemView.findViewById(R.id.userNameView);
+            mUserAgeTextView = (TextView) itemView.findViewById(R.id.userAgeView);
 
             itemView.setOnCreateContextMenuListener(this);
         }
@@ -106,34 +71,41 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //Метод, связывающий ранее добытые в конструкторе ссылки с данными модели
-        public void bindCrime(CloneFactory.Person person) {
-            mPerson = person;
-            mPersonNameTextView.setText(mPerson.getName());
-            mPersonAdressTextView.setText(mPerson.getAdress());
-            mPersonAgeTextView.setText(""+mPerson.getAge());
-            if(mPerson.isSex()){
-                mPersonSexTextView.setText("Мужчина");
-            }else {
-                mPersonSexTextView.setText("Женщина");
-            }
-
+        public void bindCrime(CloneFactory.User user) {
+            mUser = user;
+            StringBuilder sb = new StringBuilder(mUser.getName());
+            sb.append(" ");
+            sb.append(mUser.getSurname());
+            mUserNameTextView.setText(sb.toString());
+            sb = new StringBuilder(calculateAge(mUser.getBirthday()).toString());
+            sb.append(" y/o");
+            mUserAgeTextView.setText(sb.toString());
         }
 
+        private Integer calculateAge(final Date birthday)
+        {
+            Calendar dob = Calendar.getInstance();
+            Calendar today = Calendar.getInstance();
+
+            dob.setTime(birthday);
+            dob.add(Calendar.DAY_OF_MONTH, -1);
+
+            int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+            if (today.get(Calendar.DAY_OF_YEAR) <= dob.get(Calendar.DAY_OF_YEAR)) {
+                age--;
+            }
+            return age;
+        }
     }
 
-    //Наш адаптер, мост между фабрикой клонов и выводом их на экран.
-    //Его методы будет дёргать LinearLayoutManager, назныченный вьюшке
-    //RecyclerView в методе onCreate нашей активити
     private class PersonAdapter extends RecyclerView.Adapter<PersonHolder> {
 
-        private List<CloneFactory.Person> mPersons;
+        private List<CloneFactory.User> mUser;
 
-        public PersonAdapter(List<CloneFactory.Person> persons) {
-            mPersons = persons;
+        public PersonAdapter(List<CloneFactory.User> users) {
+            mUser = users;
         }
 
-        //Создаёт пустую вьюшку,оборачивает её в PersonHolder.
-        //Дальше забота по наполнению этой вьюшки ложиться именно на объект PersonHolder'а
         @Override
         public PersonHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater li = getLayoutInflater();
@@ -142,19 +114,16 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        //Дёргает метод холдера при выводе нового элемента списка на экран,
-        //передавая ему актуальный объект модели для разбора и представления
         @Override
         public void onBindViewHolder(PersonHolder holder, int position) {
-            CloneFactory.Person person = mPersons.get(position);
-            holder.bindCrime(person);
+            CloneFactory.User user = mUser.get(position);
+            holder.bindCrime(user);
 
         }
 
-        //Возвращает размер хранилища моделей
         @Override
         public int getItemCount() {
-            return mPersons.size();
+            return mUser.size();
         }
     }
 }
