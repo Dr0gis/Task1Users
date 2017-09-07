@@ -1,8 +1,12 @@
 package com.example.dr0gi.task1users;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
 
 public class CloneFactory {
     private static CloneFactory sCloneFactory;
@@ -50,12 +54,24 @@ public class CloneFactory {
 
     private CloneFactory() {
         mUserList = new ArrayList<>(COUNT_CLONE);
+        SimpleDateFormat dt = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+        Date birthday = new Date();
         for (int i = 0; i < COUNT_CLONE; i++) {
             if(i % 2 == 0) {
-                mUserList.add(new User("John", "Smith " + i, new Date(90, 1, 12)));
+                try {
+                    birthday = dt.parse("05/04/1990");
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                mUserList.add(new User("John", "Smith " + i, birthday));
             }
             else {
-                mUserList.add(new User("Ivan", "Ivanov " + i, new Date(100, 5, 1)));
+                try {
+                    birthday = dt.parse("05/04/2000");
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                mUserList.add(new User("Ivan", "Ivanov " + i, birthday));
             }
         }
 

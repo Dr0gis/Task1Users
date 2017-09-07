@@ -8,7 +8,10 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class EditActivity extends AppCompatActivity {
 
@@ -36,7 +39,11 @@ public class EditActivity extends AppCompatActivity {
 
                 editTextName.setText(CloneFactory.getCloneList().get(index).getName());
                 editTextSurname.setText(CloneFactory.getCloneList().get(index).getSurname());
-                editTextBirthday.setText(CloneFactory.getCloneList().get(index).getBirthday().toString());
+
+                DateFormat df = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+                Date birthday = CloneFactory.getCloneList().get(index).getBirthday();
+
+                editTextBirthday.setText(df.format(birthday));
                 break;
 
             default:

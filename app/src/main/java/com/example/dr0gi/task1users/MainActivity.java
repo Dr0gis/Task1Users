@@ -1,12 +1,9 @@
 package com.example.dr0gi.task1users;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
@@ -16,18 +13,20 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private PersonAdapter mAdapter;
-    private RecyclerView mRecyclerView;
+    private UserAdapter mAdapter; // Adapter
+    private RecyclerView mRecyclerView; //List Users
 
     public static final int ADD_MESSAGE = 1;
     public static final int EDIT_MESSAGE = 2;
@@ -48,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         List<CloneFactory.User> userList = CloneFactory.getCloneList();
-        mAdapter = new PersonAdapter(userList);
+        mAdapter = new UserAdapter(userList);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -96,14 +95,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void itemAdd(String name, String surname, String birthday) {
-        Date date = new Date(90, 1, 1);
+        Date date = new Date();
+
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+
+        try {
+            date = dateFormat.parse(birthday);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         CloneFactory.User newUser = new CloneFactory.User(name, surname, date);
 
         CloneFactory.getCloneList().add(newUser);
     }
 
     private void itemEdit(String name, String surname, String birthday, int index) {
-        Date date = new Date(90, 1, 1);
+        Date date = new Date();
+
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+
+        try {
+            date = dateFormat.parse(birthday);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         CloneFactory.User user = CloneFactory.getCloneList().get(index);
         user.setName(name);
         user.setSurname(surname);
@@ -122,18 +138,18 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, codeMessage);
     }
 
-    /*Класс PersonHolder занят тем, что держит на готове ссылки на элементы виджетов,
+    /*Класс UserHolder занят тем, что держит на готове ссылки на элементы виджетов,
     которые он с радостью наполнит данными из объекта модели в методе bindCrimе.
     Этот класс используется только адаптером в коде ниже, адаптер дёргает его и поручает
     грязную работу по заполнению виджетов*/
-    private class PersonHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
+    private class UserHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
 
         private TextView mUserNameTextView;
         private TextView mUserAgeTextView;
         private CloneFactory.User mUser;
         private int index;
 
-        public PersonHolder(View itemView) {
+        public UserHolder(View itemView) {
             super(itemView);
             mUserNameTextView = (TextView) itemView.findViewById(R.id.userNameView);
             mUserAgeTextView = (TextView) itemView.findViewById(R.id.userAgeView);
@@ -203,24 +219,24 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private class PersonAdapter extends RecyclerView.Adapter<PersonHolder> {
+    private class UserAdapter extends RecyclerView.Adapter<UserHolder> {
 
         private List<CloneFactory.User> mUser;
 
-        public PersonAdapter(List<CloneFactory.User> users) {
+        public UserAdapter(List<CloneFactory.User> users) {
             mUser = users;
         }
 
         @Override
-        public PersonHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public UserHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater li = getLayoutInflater();
             View view = li.inflate(R.layout.list_item_user, parent, false);
-            return new PersonHolder(view);
+            return new UserHolder(view);
 
         }
 
         @Override
-        public void onBindViewHolder(PersonHolder holder, int position) {
+        public void onBindViewHolder(UserHolder holder, int position) {
             CloneFactory.User user = mUser.get(position);
             holder.bindCrime(user, position);
         }
