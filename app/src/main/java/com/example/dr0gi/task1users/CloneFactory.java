@@ -4,16 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by dr0gi on 05.09.2017.
- */
-
 public class CloneFactory {
     private static CloneFactory sCloneFactory;
     private static List<User> mUserList;
     private final int COUNT_CLONE = 10;
 
-    public class User {
+    public static class User {
         private String name;
         private String surname;
         private Date birthday;
@@ -64,6 +60,7 @@ public class CloneFactory {
         }
 
     }
+
     public static List<User> getCloneList() {
         if(sCloneFactory == null){
             sCloneFactory = new CloneFactory();

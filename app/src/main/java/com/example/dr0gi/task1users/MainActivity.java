@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,14 +24,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by dr0gi on 05.09.2017.
- */
-
 public class MainActivity extends AppCompatActivity {
 
     private PersonAdapter mAdapter;
     private RecyclerView mRecyclerView;
+
+    public static final int ADD_MESSAGE = 1;
+    public static final int EDIT_MESSAGE = 2;
+    public static final String INDEX = "com.example.dr0gi.task1users.INDEX";
+    public static final String NAME_USER = "com.example.dr0gi.task1users.NAME_USER";
+    public static final String SURNAME_USER = "com.example.dr0gi.task1users.SURNAME_USER";
+    public static final String BIRTHDAY_USER = "com.example.dr0gi.task1users.BIRTHDAY_USER";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,16 +62,64 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.button_add:
-                openEditActivity();
+                openEditActivity(ADD_MESSAGE, -1);
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    public void openEditActivity() {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            String name = data.getStringExtra(NAME_USER);
+            String surname = data.getStringExtra(SURNAME_USER);
+            String bitrthday = data.getStringExtra(BIRTHDAY_USER);
+
+            switch (requestCode) {
+                case (ADD_MESSAGE):
+                    itemAdd(name, surname, bitrthday);
+                    break;
+
+                case (EDIT_MESSAGE):
+                    int index = data.getIntExtra(INDEX, -1);
+                    itemEdit(name, surname, bitrthday, index);
+                    break;
+
+                default:
+                    break;
+            }
+
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void itemAdd(String name, String surname, String birthday) {
+        Date date = new Date(90, 1, 1);
+        CloneFactory.User newUser = new CloneFactory.User(name, surname, date);
+
+        CloneFactory.getCloneList().add(newUser);
+    }
+
+    private void itemEdit(String name, String surname, String birthday, int index) {
+        Date date = new Date(90, 1, 1);
+        CloneFactory.User user = CloneFactory.getCloneList().get(index);
+        user.setName(name);
+        user.setSurname(surname);
+        user.setBirthday(date);
+    }
+
+    private void removeItem(int index) {
+        CloneFactory.getCloneList().remove(index);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    public void openEditActivity(int codeMessage, int index) {
         Intent intent = new Intent(this, EditActivity.class);
-        startActivity(intent);
+        intent.setFlags(codeMessage);
+        intent.putExtra(INDEX, index);
+        startActivityForResult(intent, codeMessage);
     }
 
     /*Класс PersonHolder занят тем, что держит на готове ссылки на элементы виджетов,
@@ -79,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
         private TextView mUserNameTextView;
         private TextView mUserAgeTextView;
         private CloneFactory.User mUser;
+        private int index;
 
         public PersonHolder(View itemView) {
             super(itemView);
@@ -98,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
                 final MenuItem menuItem = menu.getItem(index);
                 menuItem.setOnMenuItemClickListener(this);
             }
+
         }
 
         @Override
@@ -105,24 +159,29 @@ public class MainActivity extends AppCompatActivity {
 
             switch (item.getItemId()) {
                 case R.id.edit_option:
-                    openEditActivity();
+                    openEditActivity(EDIT_MESSAGE, index);
                     return true;
 
                 case R.id.remove_option:
+                    removeItem(index);
                     return true;
 
                 default:
                     return false;
             }
+
         }
 
         //Метод, связывающий ранее добытые в конструкторе ссылки с данными модели
-        public void bindCrime(CloneFactory.User user) {
+        public void bindCrime(CloneFactory.User user, int index) {
             mUser = user;
+            this.index = index;
+
             StringBuilder sb = new StringBuilder(mUser.getName());
             sb.append(" ");
             sb.append(mUser.getSurname());
             mUserNameTextView.setText(sb.toString());
+
             sb = new StringBuilder(calculateAge(mUser.getBirthday()).toString());
             sb.append(" y/o");
             mUserAgeTextView.setText(sb.toString());
@@ -163,8 +222,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(PersonHolder holder, int position) {
             CloneFactory.User user = mUser.get(position);
-            holder.bindCrime(user);
-
+            holder.bindCrime(user, position);
         }
 
         @Override
