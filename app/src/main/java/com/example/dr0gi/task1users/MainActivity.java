@@ -28,12 +28,12 @@ public class MainActivity extends AppCompatActivity {
     private UserAdapter mAdapter; // Adapter
     private RecyclerView mRecyclerView; //List Users
 
-    public static final int ADD_MESSAGE = 1;
-    public static final int EDIT_MESSAGE = 2;
-    public static final String INDEX = "com.example.dr0gi.task1users.INDEX";
-    public static final String NAME_USER = "com.example.dr0gi.task1users.NAME_USER";
-    public static final String SURNAME_USER = "com.example.dr0gi.task1users.SURNAME_USER";
-    public static final String BIRTHDAY_USER = "com.example.dr0gi.task1users.BIRTHDAY_USER";
+    public static final int ADD_MESSAGE = 1; // Code message for open activity
+    public static final int EDIT_MESSAGE = 2; // Code message for open activity
+    public static final String INDEX = "com.example.dr0gi.task1users.INDEX"; // String for intent extra
+    public static final String NAME_USER = "com.example.dr0gi.task1users.NAME_USER"; // String for intent extra
+    public static final String SURNAME_USER = "com.example.dr0gi.task1users.SURNAME_USER"; // String for intent extra
+    public static final String BIRTHDAY_USER = "com.example.dr0gi.task1users.BIRTHDAY_USER"; // String for intent extra
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +51,14 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
     }
 
+    // Main menu / Items - Add
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
+    // Main menu / Items - Add
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Result after EditActivity Edit or Add items to Users
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
@@ -94,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Add item to Users
     private void itemAdd(String name, String surname, String birthday) {
         Date date = new Date();
 
@@ -110,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
         CloneFactory.getCloneList().add(newUser);
     }
 
+    // Edit item to Users
     private void itemEdit(String name, String surname, String birthday, int index) {
         Date date = new Date();
 
@@ -126,11 +131,13 @@ public class MainActivity extends AppCompatActivity {
         user.setBirthday(date);
     }
 
+    // Remove item to Users
     private void removeItem(int index) {
         CloneFactory.getCloneList().remove(index);
         mAdapter.notifyDataSetChanged();
     }
 
+    // Open EditActivity for Edit or Add items to Users
     public void openEditActivity(int codeMessage, int index) {
         Intent intent = new Intent(this, EditActivity.class);
         intent.setFlags(codeMessage);
@@ -138,10 +145,7 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, codeMessage);
     }
 
-    /*Класс UserHolder занят тем, что держит на готове ссылки на элементы виджетов,
-    которые он с радостью наполнит данными из объекта модели в методе bindCrimе.
-    Этот класс используется только адаптером в коде ниже, адаптер дёргает его и поручает
-    грязную работу по заполнению виджетов*/
+    // Class for keeping links on elements widget, class used only for adapter
     private class UserHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
 
         private TextView mUserNameTextView;
@@ -157,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
             itemView.setOnCreateContextMenuListener(this);
         }
 
+        // Contex menu / Items - Edit, Remove
         @Override
         public void onCreateContextMenu(ContextMenu menu, View itemView, ContextMenu.ContextMenuInfo menuInfo) {
             MenuInflater inflater = getMenuInflater();
@@ -170,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        // Contex menu / Items - Edit, Remove
         @Override
         public boolean onMenuItemClick(MenuItem item) {
 
@@ -188,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        //Метод, связывающий ранее добытые в конструкторе ссылки с данными модели
+        // A method that links references with data
         public void bindCrime(CloneFactory.User user, int index) {
             mUser = user;
             this.index = index;
@@ -203,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
             mUserAgeTextView.setText(sb.toString());
         }
 
+        // Calculate age by birthday
         private Integer calculateAge(final Date birthday) {
             Calendar dob = Calendar.getInstance();
             Calendar today = Calendar.getInstance();
@@ -219,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // Adapter for recycler view
     private class UserAdapter extends RecyclerView.Adapter<UserHolder> {
 
         private List<CloneFactory.User> mUser;

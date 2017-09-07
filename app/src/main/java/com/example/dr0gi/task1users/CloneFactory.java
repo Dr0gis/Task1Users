@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 
 
+// Class for keeping and create data (List Users)
 public class CloneFactory {
     private static CloneFactory sCloneFactory;
     private static List<User> mUserList;

@@ -25,6 +25,7 @@ public class EditActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int message = intent.getFlags();
 
+        // Fill data in edit text
         switch (message) {
             case MainActivity.ADD_MESSAGE:
 
@@ -51,12 +52,14 @@ public class EditActivity extends AppCompatActivity {
         }
     }
 
+    // Menu save / Items - Save (Create new User or Edit old)
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_save, menu);
         return true;
     }
 
+    // Menu save / Items - Save (Create new User or Edit old)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = new Intent(this, MainActivity.class);
