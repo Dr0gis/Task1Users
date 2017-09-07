@@ -3,4 +3,8 @@
     <string name="action_settings">Add</string>
     <string name="edit_option">Edit</string>
     <string name="remove_option">Remove</string>
+    <string name="edit_name">Name</string>
+    <string name="edit_surname">Surname</string>
+    <string name="edit_birthday">Birthday</string>
+    <string name="button_save">Save</string>
 </resources>

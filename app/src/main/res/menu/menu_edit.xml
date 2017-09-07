@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.dr0gi.example2.MainActivity">
+
     <item
         android:id="@+id/edit_option"
         android:orderInCategory="100"
-        android:title="@string/edit_option"
-        app:showAsAction="never" />
+        android:title="@string/edit_option" />
     <item
         android:id="@+id/remove_option"
         android:orderInCategory="101"

@@ -1,16 +1,23 @@
 package com.example.dr0gi.task1users;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -47,11 +54,27 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.button_add:
+                openEditActivity();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void openEditActivity() {
+        Intent intent = new Intent(this, EditActivity.class);
+        startActivity(intent);
+    }
+
     /*Класс PersonHolder занят тем, что держит на готове ссылки на элементы виджетов,
     которые он с радостью наполнит данными из объекта модели в методе bindCrimе.
     Этот класс используется только адаптером в коде ниже, адаптер дёргает его и поручает
     грязную работу по заполнению виджетов*/
-    private class PersonHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
+    private class PersonHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
 
         private TextView mUserNameTextView;
         private TextView mUserAgeTextView;
@@ -67,7 +90,30 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View itemView, ContextMenu.ContextMenuInfo menuInfo) {
-            getMenuInflater().inflate(R.menu.menu_edit, menu);
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.menu_edit, menu);
+
+            final int length = menu.size();
+            for (int index = 0; index < length; index++) {
+                final MenuItem menuItem = menu.getItem(index);
+                menuItem.setOnMenuItemClickListener(this);
+            }
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+
+            switch (item.getItemId()) {
+                case R.id.edit_option:
+                    openEditActivity();
+                    return true;
+
+                case R.id.remove_option:
+                    return true;
+
+                default:
+                    return false;
+            }
         }
 
         //Метод, связывающий ранее добытые в конструкторе ссылки с данными модели
@@ -82,8 +128,7 @@ public class MainActivity extends AppCompatActivity {
             mUserAgeTextView.setText(sb.toString());
         }
 
-        private Integer calculateAge(final Date birthday)
-        {
+        private Integer calculateAge(final Date birthday) {
             Calendar dob = Calendar.getInstance();
             Calendar today = Calendar.getInstance();
 
@@ -96,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
             }
             return age;
         }
+
     }
 
     private class PersonAdapter extends RecyclerView.Adapter<PersonHolder> {
