@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -38,11 +37,11 @@ public class EditActivity extends AppCompatActivity {
                 EditText editTextSurname = (EditText) findViewById(R.id.editTextSurname);
                 EditText editTextBirthday = (EditText) findViewById(R.id.editTextBirthday);
 
-                editTextName.setText(CloneFactory.getCloneList().get(index).getName());
-                editTextSurname.setText(CloneFactory.getCloneList().get(index).getSurname());
+                editTextName.setText(UsersController.getUsersList().get(index).getName());
+                editTextSurname.setText(UsersController.getUsersList().get(index).getSurname());
 
                 DateFormat df = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
-                Date birthday = CloneFactory.getCloneList().get(index).getBirthday();
+                Date birthday = UsersController.getUsersList().get(index).getBirthday();
 
                 editTextBirthday.setText(df.format(birthday));
                 break;
