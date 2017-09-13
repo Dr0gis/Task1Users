@@ -1,8 +1,10 @@
 package com.example.dr0gi.task1users;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -28,6 +30,10 @@ public class EditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
+
+        String titleActivity = "Profile info";
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(titleActivity);
 
         Intent intent = getIntent();
         int message = intent.getFlags();
