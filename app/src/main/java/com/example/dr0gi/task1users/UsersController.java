@@ -7,13 +7,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-
 // Class for keeping and create data (List Users)
-public abstract class UsersController {
-    private static final int COUNT_USERS = 10;
+public class UsersController {
+    private static final int COUNT_USERS = 100;
+    private List<User> usersList;
 
-    public static List<User> getUsersList() {
-        List<User> usersList = new ArrayList<>(COUNT_USERS);
+    public UsersController() {
+        usersList = new ArrayList<>(COUNT_USERS);
         SimpleDateFormat dt = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
         Date birthday = new Date();
 
@@ -24,7 +24,7 @@ public abstract class UsersController {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                usersList.add(new User("John", "Smith " + i, birthday));
+                usersList.add(new User(i, "John", "Smith " + i, birthday));
             }
             else {
                 try {
@@ -32,10 +32,47 @@ public abstract class UsersController {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                usersList.add(new User("Ivan", "Ivanov " + i, birthday));
+                usersList.add(new User(i, "Ivan", "Ivanov " + i, birthday));
             }
         }
+    }
 
-        return usersList;
+    public User getItem(int index) {
+        return usersList.get(index);
+    }
+
+    public int getPositionItem(int id) {
+        int k = 0;
+        for (User i : usersList) {
+            if (i.getID() == id) {
+                return k;
+            }
+            ++k;
+        }
+        return -1;
+    }
+
+    public void removeItem(int index) {
+        usersList.remove(index);
+    }
+
+    public void setItem(User item) {
+        for (User i : usersList) {
+            if (i.getID() == item.getID()) {
+                i.setUser(item);
+            }
+        }
+    }
+
+    public void addItem(User item) {
+        usersList.add(item);
+    }
+
+    public int getLastIndex() {
+        return usersList.size() - 1;
+    }
+
+    public int getSize() {
+        return usersList.size();
     }
 }

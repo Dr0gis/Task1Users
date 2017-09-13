@@ -8,13 +8,14 @@ import android.view.MenuItem;
 import android.widget.EditText;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 public class EditActivity extends AppCompatActivity {
 
-    private int index;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,28 +28,28 @@ public class EditActivity extends AppCompatActivity {
         // Fill data in edit text
         switch (message) {
             case MainActivity.ADD_MESSAGE:
-
+                user = new User();
                 break;
 
             case MainActivity.EDIT_MESSAGE:
-                index = intent.getIntExtra(MainActivity.INDEX, 0);
-
-                EditText editTextName = (EditText) findViewById(R.id.editTextName);
-                EditText editTextSurname = (EditText) findViewById(R.id.editTextSurname);
-                EditText editTextBirthday = (EditText) findViewById(R.id.editTextBirthday);
-
-                editTextName.setText(UsersController.getUsersList().get(index).getName());
-                editTextSurname.setText(UsersController.getUsersList().get(index).getSurname());
-
-                DateFormat df = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
-                Date birthday = UsersController.getUsersList().get(index).getBirthday();
-
-                editTextBirthday.setText(df.format(birthday));
+                user = (User) intent.getSerializableExtra(MainActivity.ITEM_USER);
                 break;
 
             default:
+                user = new User();
                 break;
         }
+
+        EditText editTextName = (EditText) findViewById(R.id.editTextName);
+        EditText editTextSurname = (EditText) findViewById(R.id.editTextSurname);
+        EditText editTextBirthday = (EditText) findViewById(R.id.editTextBirthday);
+
+        editTextName.setText(user.getName());
+        editTextSurname.setText(user.getSurname());
+
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+        Date birthday = user.getBirthday();
+        editTextBirthday.setText(df.format(birthday));
     }
 
     // Menu save / Items - Save (Create new User or Edit old)
@@ -62,17 +63,25 @@ public class EditActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = new Intent(this, MainActivity.class);
-        EditText editTextName = (EditText) findViewById(R.id.editTextName);
-        EditText editTextSurname = (EditText) findViewById(R.id.editTextSurname);
-        EditText editTextBirthday = (EditText) findViewById(R.id.editTextBirthday);
+        String name = ((EditText) findViewById(R.id.editTextName)).getText().toString();
+        String surname = ((EditText) findViewById(R.id.editTextSurname)).getText().toString();
+        String birthdayStr = ((EditText) findViewById(R.id.editTextBirthday)).getText().toString();
+
+        Date dateBirthday = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+
+        try {
+            dateBirthday = dateFormat.parse(birthdayStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        User newUser = new User(user.getID(), name, surname, dateBirthday);
 
         switch (item.getItemId()) {
 
             case R.id.button_save:
-                intent.putExtra(MainActivity.INDEX, index);
-                intent.putExtra(MainActivity.NAME_USER, editTextName.getText().toString());
-                intent.putExtra(MainActivity.SURNAME_USER, editTextSurname.getText().toString());
-                intent.putExtra(MainActivity.BIRTHDAY_USER, editTextBirthday.getText().toString());
+                intent.putExtra(MainActivity.ITEM_USER, newUser);
                 setResult(RESULT_OK, intent);
                 finish();
                 return true;

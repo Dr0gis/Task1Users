@@ -1,6 +1,5 @@
 package com.example.dr0gi.task1users;
 
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
@@ -8,24 +7,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.Calendar;
-import java.util.Date;
-
-import static com.example.dr0gi.task1users.MainActivity.EDIT_MESSAGE;
-
 // Class for keeping links on elements widget, class used only for adapter
 public class UserHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
 
-    private TextView mUserNameTextView;
-    private TextView mUserAgeTextView;
-    private User mUser;
+    private TextView userNameTextView;
+    private TextView userAgeTextView;
+    private User user;
     private int index;
     private MainActivity mainActivity;
 
     public UserHolder(View itemView, MainActivity mainActivity) {
         super(itemView);
-        mUserNameTextView = (TextView) itemView.findViewById(R.id.userNameView);
-        mUserAgeTextView = (TextView) itemView.findViewById(R.id.userAgeView);
+        userNameTextView = (TextView) itemView.findViewById(R.id.userNameView);
+        userAgeTextView = (TextView) itemView.findViewById(R.id.userAgeView);
         this.mainActivity = mainActivity;
         itemView.setOnCreateContextMenuListener(this);
     }
@@ -50,10 +44,11 @@ public class UserHolder extends RecyclerView.ViewHolder implements View.OnCreate
 
         switch (item.getItemId()) {
             case R.id.edit_option:
-                mainActivity.openEditActivity(EDIT_MESSAGE, index);
+                mainActivity.openEditActivity(MainActivity.EDIT_MESSAGE, user);
                 return true;
 
             case R.id.remove_option:
+
                 mainActivity.removeItem(index);
                 return true;
 
@@ -65,19 +60,16 @@ public class UserHolder extends RecyclerView.ViewHolder implements View.OnCreate
 
     // A method that links references with data
     public void bindData(User user, int index) {
-        mUser = user;
+        this.user = user;
         this.index = index;
 
-        StringBuilder sb = new StringBuilder(mUser.getName());
+        StringBuilder sb = new StringBuilder(this.user.getName());
         sb.append(" ");
-        sb.append(mUser.getSurname());
-        mUserNameTextView.setText(sb.toString());
+        sb.append(this.user.getSurname());
+        userNameTextView.setText(sb.toString());
 
-        sb = new StringBuilder(mUser.getAge());
+        sb = new StringBuilder(Integer.toString(this.user.getAge()));
         sb.append(" y/o");
-        mUserAgeTextView.setText(sb.toString());
+        userAgeTextView.setText(sb.toString());
     }
-
-
-
 }

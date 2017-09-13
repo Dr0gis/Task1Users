@@ -1,23 +1,42 @@
 package com.example.dr0gi.task1users;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
-public class User {
+public class User implements Serializable {
+    private int id;
     private String name;
     private String surname;
     private Date birthday;
     private int age;
 
     public User() {
-
+        this.id = -1;
+        this.name = "Name";
+        this.surname = "Surname";
+        this.birthday = new Date();
+        this.age = calculateAge(this.birthday);
     }
 
-    public User(String name, String surname, Date birthday) {
+    public User(int id, String name, String surname, Date birthday) {
+        this.id = id;
         this.name = name;
         this.birthday = birthday;
         this.surname = surname;
         this.age = calculateAge(this.birthday);
+    }
+
+    public User(User user) {
+        this.id = user.id;
+        this.name = user.name;
+        this.birthday = user.birthday;
+        this.surname = user.surname;
+        this.age = calculateAge(this.birthday);
+    }
+
+    public  int getID() {
+        return id;
     }
 
     public String getName() {
@@ -50,6 +69,14 @@ public class User {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public void setUser(User user) {
+        this.id = user.id;
+        this.name = user.name;
+        this.birthday = user.birthday;
+        this.surname = user.surname;
+        this.age = calculateAge(this.birthday);
     }
 
     // Calculate age by birthday

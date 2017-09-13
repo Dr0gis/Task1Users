@@ -10,11 +10,11 @@ import java.util.List;
 // Adapter for recycler view
 public class UserAdapter extends RecyclerView.Adapter<UserHolder> {
 
-    private List<User> usersList;
+    private UsersController usersController;
     private MainActivity mainActivity;
 
-    public UserAdapter(List<User> usersList, MainActivity mainActivity) {
-        this.usersList = usersList;
+    public UserAdapter(UsersController usersController, MainActivity mainActivity) {
+        this.usersController = usersController;
         this.mainActivity = mainActivity;
     }
 
@@ -27,12 +27,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserHolder> {
 
     @Override
     public void onBindViewHolder(UserHolder holder, int position) {
-        User user = usersList.get(position);
+        User user = usersController.getItem(position);
         holder.bindData(user, position);
     }
 
     @Override
     public int getItemCount() {
-        return usersList.size();
+        return usersController.getSize();
     }
 }
