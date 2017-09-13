@@ -9,8 +9,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingBottom="32dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
         android:paddingTop="32dp">
 
         <LinearLayout
@@ -65,17 +65,40 @@
             <TextView
                 android:id="@+id/textViewBirthday"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/edit_birthday" />
+                android:layout_height="match_parent"
+                android:text="@string/edit_birthday"
+                android:layout_weight="3"
+                android:gravity="center_vertical"/>
 
-            <EditText
+            <NumberPicker
+                android:id="@+id/numberPickerBirthdayMonth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="5"/>
+
+            <NumberPicker
+                android:id="@+id/numberPickerBirthdayDay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="5"/>
+
+            <NumberPicker
+                android:id="@+id/numberPickerBirthdayYear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="5"/>
+
+
+            <!--<EditText
                 android:id="@+id/editTextBirthday"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="date" />
+                android:inputType="date" />-->
 
         </LinearLayout>
 
