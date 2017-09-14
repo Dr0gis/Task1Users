@@ -1,8 +1,12 @@
 package com.example.dr0gi.task1users;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class User implements Serializable {
     private int id;
@@ -27,6 +31,20 @@ public class User implements Serializable {
         this.age = calculateAge(this.birthday);
     }
 
+    public User(int id, String name, String surname, String birthdayStr) {
+        this.id = id;
+        this.name = name;
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+        try {
+            this.birthday = dateFormat.parse(birthdayStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        this.surname = surname;
+        this.age = calculateAge(this.birthday);
+    }
+
+
     public User(User user) {
         this.id = user.id;
         this.name = user.name;
@@ -35,8 +53,12 @@ public class User implements Serializable {
         this.age = calculateAge(this.birthday);
     }
 
-    public  int getID() {
+    public int getID() {
         return id;
+    }
+
+    public void setID(int id) {
+         this.id = id;
     }
 
     public String getName() {
@@ -57,6 +79,20 @@ public class User implements Serializable {
 
     public Date getBirthday() {
         return birthday;
+    }
+
+    public String getBirthdayStr() {
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+        return df.format(birthday);
+    }
+
+    public void setBirthdayStr(String birthdayStr) {
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+        try {
+            birthday = dateFormat.parse(birthdayStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setBirthday(Date birthday) {

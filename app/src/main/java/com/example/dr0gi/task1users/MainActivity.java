@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         usersRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewUsers);
         usersRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        usersController = new UsersController();
+        usersController = new UsersController(getApplicationContext());
         usersAdapter = new UserAdapter(usersController, this);
         usersRecyclerView.setAdapter(usersAdapter);
     }
@@ -102,8 +102,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Remove item to Users
-    public void removeItem(int index) {
-        usersController.removeItem(index);
+    public void removeItem(int index, int id) {
+        usersController.removeItemById(id);
         usersAdapter.notifyItemRemoved(index);
     }
 

@@ -97,16 +97,7 @@ public class EditActivity extends AppCompatActivity {
         birthdayStr.append("/");
         birthdayStr.append(Integer.toString(numberPickerBirthdayYear.getValue()));
 
-        Date dateBirthday = new Date();
-        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
-
-        try {
-            dateBirthday = dateFormat.parse(birthdayStr.toString());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        User newUser = new User(user.getID(), name, surname, dateBirthday);
+        User newUser = new User(user.getID(), name, surname, birthdayStr.toString());
 
         switch (item.getItemId()) {
 

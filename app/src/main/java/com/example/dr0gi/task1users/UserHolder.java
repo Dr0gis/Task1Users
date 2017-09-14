@@ -48,8 +48,7 @@ public class UserHolder extends RecyclerView.ViewHolder implements View.OnCreate
                 return true;
 
             case R.id.remove_option:
-
-                mainActivity.removeItem(index);
+                mainActivity.removeItem(index, user.getID());
                 return true;
 
             default:
