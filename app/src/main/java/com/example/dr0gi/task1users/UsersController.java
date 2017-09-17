@@ -1,13 +1,10 @@
 package com.example.dr0gi.task1users;
 
 import android.content.Context;
+import android.os.AsyncTask;
+import android.widget.Toast;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 // Class for keeping and create data (List Users)
 public class UsersController {
@@ -69,37 +66,27 @@ public class UsersController {
         return -1;
     }
 
-    /*public void removeItem(int index) {
-        usersList.remove(index);
-    }*/
-
-    public void removeItemById(int id) {
-        DatabaseHandler db = new DatabaseHandler(context);
-
+    public boolean removeItemById(int id) {
         int i = 0;
         for (User item: usersList) {
             if (item.getID() == id) {
                 usersList.remove(i);
-                db.deleteUser(item);
-                return;
+                new removeItemByIdThread().execute(item);
+                return true;
             }
             ++i;
         }
+        return false;
 
-        db.close();
     }
 
-    public void setItem(User item) {
-        DatabaseHandler db = new DatabaseHandler(context);
-
+    public void updateItem(User item) {
         for (User i : usersList) {
             if (i.getID() == item.getID()) {
                 i.setUser(item);
-                db.updateUser(item);
+                new updateItemThread().execute(item);
             }
         }
-
-        db.close();
     }
 
     public void addItem(User item) {
@@ -108,7 +95,6 @@ public class UsersController {
         int id = (int) db.addUser(item);
         item.setID(id);
         usersList.add(item);
-        //updateUsersList();
 
         db.close();
     }
@@ -119,5 +105,49 @@ public class UsersController {
 
     public int getSize() {
         return usersList.size();
+    }
+
+    private class removeItemByIdThread extends AsyncTask<User, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            Toast.makeText(context, "Задача запущена", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected Void doInBackground(User... params) {
+            DatabaseHandler db = new DatabaseHandler(context);
+            db.deleteUser(params[0]);
+            db.close();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            Toast.makeText(context, "Задача завершена", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private class updateItemThread extends AsyncTask<User, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            Toast.makeText(context, "Задача запущена", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected Void doInBackground(User... params) {
+            DatabaseHandler db = new DatabaseHandler(context);
+            db.updateUser(params[0]);
+            db.close();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            Toast.makeText(context, "Задача завершена", Toast.LENGTH_SHORT).show();
+        }
+
     }
 }

@@ -8,14 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ScrollView;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -95,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Edit item to Users
     private void itemEdit(User newUser) {
-        usersController.setItem(newUser);
+        usersController.updateItem(newUser);
         int index = usersController.getPositionItem(newUser.getID());
         usersRecyclerView.smoothScrollToPosition(index);
         usersAdapter.notifyDataSetChanged();
