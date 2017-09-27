@@ -22,6 +22,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_SURNAME = "surname";
     private static final String KEY_BIRTHDAY = "birthday";
 
+    public interface OnDBOperationCompleted<T>{
+        void onSuccess(T result);
+        void onError();
+    }
+
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -125,7 +130,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // Getting Users Count
     public int getUsersCount() {
-        String countQuery = "SELECT  * FROM " + TABLE_USERS;
+        String countQuery = "SELECT * FROM " + TABLE_USERS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         cursor.close();

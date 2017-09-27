@@ -30,9 +30,9 @@ public class UserHolder extends RecyclerView.ViewHolder implements View.OnCreate
         MenuInflater inflater = mainActivity.getMenuInflater();
         inflater.inflate(R.menu.menu_edit, menu);
 
-        final int length = menu.size();
+        int length = menu.size();
         for (int index = 0; index < length; index++) {
-            final MenuItem menuItem = menu.getItem(index);
+            MenuItem menuItem = menu.getItem(index);
             menuItem.setOnMenuItemClickListener(this);
         }
 

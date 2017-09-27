@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -87,7 +88,17 @@ public class MainActivity extends AppCompatActivity {
 
     // Edit item to Users
     private void itemEdit(User newUser) {
-        usersController.updateItem(newUser);
+        usersController.updateItem(newUser, new DatabaseHandler.OnDBOperationCompleted<Integer>() {
+            @Override
+            public void onSuccess(Integer result) {
+                Toast.makeText(MainActivity.this, "OK", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
         int index = usersController.getPositionItem(newUser.getID());
         usersRecyclerView.smoothScrollToPosition(index);
         usersAdapter.notifyDataSetChanged();

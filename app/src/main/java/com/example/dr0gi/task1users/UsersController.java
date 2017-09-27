@@ -80,11 +80,11 @@ public class UsersController {
 
     }
 
-    public void updateItem(User item) {
+    public void updateItem(User item, DatabaseHandler.OnDBOperationCompleted<Integer> listener) {
         for (User i : usersList) {
             if (i.getID() == item.getID()) {
                 i.setUser(item);
-                new updateItemThread().execute(item);
+                new updateItemThread(listener).execute(item);
             }
         }
     }
@@ -129,7 +129,13 @@ public class UsersController {
 
     }
 
-    private class updateItemThread extends AsyncTask<User, Void, Void> {
+    private class updateItemThread extends AsyncTask<User, Integer, Integer> {
+
+        private DatabaseHandler.OnDBOperationCompleted<Integer> listener;
+
+        updateItemThread(DatabaseHandler.OnDBOperationCompleted<Integer> listener){
+            this.listener = listener;
+        }
 
         @Override
         protected void onPreExecute() {
@@ -137,16 +143,21 @@ public class UsersController {
         }
 
         @Override
-        protected Void doInBackground(User... params) {
+        protected Integer doInBackground(User... params) {
             DatabaseHandler db = new DatabaseHandler(context);
-            db.updateUser(params[0]);
+            int result = db.updateUser(params[0]);
             db.close();
-            return null;
+            return result;
         }
 
         @Override
-        protected void onPostExecute(Void unused) {
+        protected void onPostExecute(Integer result) {
             Toast.makeText(context, "Задача завершена", Toast.LENGTH_SHORT).show();
+            if (result>0){
+                listener.onSuccess(result);
+            }else {
+                listener.onError();
+            }
         }
 
     }
