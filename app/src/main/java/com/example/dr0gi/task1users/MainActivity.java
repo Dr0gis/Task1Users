@@ -1,13 +1,18 @@
 package com.example.dr0gi.task1users;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -18,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int ADD_MESSAGE = 1; // Code message for open activity
     public static final int EDIT_MESSAGE = 2; // Code message for open activity
+    public static final String CODE_MESSAGE = "com.example.dr0gi.task1users.CODE_MESSAGE";
     public static final String ITEM_USER = "com.example.dr0gi.task1users.ITEM_USER";
 
     @Override
@@ -30,8 +36,12 @@ public class MainActivity extends AppCompatActivity {
 
         usersRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewUsers);
         usersRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        registerForContextMenu(usersRecyclerView);
+        usersRecyclerView.setOnCreateContextMenuListener(MainActivity.this);
 
-        usersController = new UsersController(getApplicationContext());
+        MyApplication myApplication = (MyApplication) getApplicationContext();
+
+        usersController = new UsersController(myApplication.getDataBaseConnect());
         usersAdapter = new UserAdapter(usersController, this);
         usersRecyclerView.setAdapter(usersAdapter);
     }
@@ -53,6 +63,42 @@ public class MainActivity extends AppCompatActivity {
 
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    // Contex menu / Items - Edit, Remove
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View itemView, ContextMenu.ContextMenuInfo menuInfo) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_edit, menu);
+
+        AdapterView.AdapterContextMenuInfo adapterContextMenuInfo = (AdapterView.AdapterContextMenuInfo) menuInfo;
+
+        int temp1 = adapterContextMenuInfo.position;
+        int temp2 = 0;
+        /*int length = menu.size();
+        for (int index = 0; index < length; index++) {
+            MenuItem menuItem = menu.getItem(index);
+            //menuItem.setOnMenuItemClickListener(MainActivity.this);
+        }*/
+
+    }
+
+    // Contex menu / Items - Edit, Remove
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case R.id.edit_option:
+                openEditActivity(MainActivity.EDIT_MESSAGE, info.position);
+                return true;
+
+            case R.id.remove_option:
+                removeItem(info.position);
+                return true;
+
+            default:
+                return false;
         }
     }
 
@@ -81,17 +127,21 @@ public class MainActivity extends AppCompatActivity {
 
     // Add item to Users
     private void itemAdd(User newUser) {
-        usersController.addItem(newUser);
-        usersRecyclerView.smoothScrollToPosition(usersController.getLastIndex());
-        usersAdapter.notifyItemInserted(usersController.getLastIndex());
-    }
-
-    // Edit item to Users
-    private void itemEdit(User newUser) {
-        usersController.updateItem(newUser, new DatabaseHandler.OnDBOperationCompleted<Integer>() {
+        usersController.addItem(newUser, new DatabaseHandler.OnDBOperationCompleted<Long>() {
             @Override
-            public void onSuccess(Integer result) {
-                Toast.makeText(MainActivity.this, "OK", Toast.LENGTH_LONG).show();
+            public void onSuccess(Long result) {
+                usersController.updateUserList(new DatabaseHandler.OnDBOperationCompleted<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        usersAdapter.notifyItemInserted(usersController.getLastIndex());
+                        usersRecyclerView.smoothScrollToPosition(usersController.getLastIndex());
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
             }
 
             @Override
@@ -99,27 +149,73 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        int index = usersController.getPositionItem(newUser.getID());
-        usersRecyclerView.smoothScrollToPosition(index);
-        usersAdapter.notifyDataSetChanged();
+    }
+
+    // Edit item to Users
+    private void itemEdit(User newUser) {
+        usersController.updateItem(newUser, new DatabaseHandler.OnDBOperationCompleted<Integer>() {
+            @Override
+            public void onSuccess(Integer result) {
+                usersController.updateUserList(new DatabaseHandler.OnDBOperationCompleted<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        usersAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
     }
 
     // Remove item to Users
-    public void removeItem(int index, int id) {
-        usersController.removeItemById(id);
-        usersAdapter.notifyItemRemoved(index);
+    public void removeItem(final int index) {
+        User user = usersController.getItem(index);
+        usersController.removeItem(user, new DatabaseHandler.OnDBOperationCompleted<Integer>() {
+            @Override
+            public void onSuccess(Integer result) {
+                usersController.updateUserList(new DatabaseHandler.OnDBOperationCompleted<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        usersAdapter.notifyItemRemoved(index);
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
     }
 
     // Open EditActivity for Edit or Add items to Users
-    public void openEditActivity(int codeMessage, User user) {
+    public void openEditActivity(int codeMessage, int position) {
+        User user = usersController.getItem(position);
+
         Intent intent = new Intent(this, EditActivity.class);
-        intent.setFlags(codeMessage);
+
+        intent.putExtra(CODE_MESSAGE, codeMessage);
         intent.putExtra(ITEM_USER, user);
         startActivityForResult(intent, codeMessage);
     }
     public void openEditActivity(int codeMessage) {
         Intent intent = new Intent(this, EditActivity.class);
-        intent.setFlags(codeMessage);
+        intent.putExtra(CODE_MESSAGE, codeMessage);
         startActivityForResult(intent, codeMessage);
     }
 }

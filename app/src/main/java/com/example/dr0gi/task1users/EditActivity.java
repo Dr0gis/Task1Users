@@ -36,7 +36,7 @@ public class EditActivity extends AppCompatActivity {
         actionBar.setTitle(titleActivity);
 
         Intent intent = getIntent();
-        int message = intent.getFlags();
+        int message = intent.getIntExtra(MainActivity.CODE_MESSAGE, -1);
 
         // Fill data in edit text
         switch (message) {

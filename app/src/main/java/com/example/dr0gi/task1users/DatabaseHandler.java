@@ -21,6 +21,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_NAME = "name";
     private static final String KEY_SURNAME = "surname";
     private static final String KEY_BIRTHDAY = "birthday";
+    private static final String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS +
+    "(" +
+        KEY_ID + " INTEGER PRIMARY KEY," +
+        KEY_NAME + " TEXT," +
+        KEY_SURNAME + " TEXT," +
+        KEY_BIRTHDAY + " TEXT" +
+    ")";
 
     public interface OnDBOperationCompleted<T>{
         void onSuccess(T result);
@@ -33,13 +40,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS +
-            "(" +
-                KEY_ID + " INTEGER PRIMARY KEY," +
-                KEY_NAME + " TEXT," +
-                KEY_SURNAME + " TEXT," +
-                KEY_BIRTHDAY + " TEXT" +
-            ")";
         db.execSQL(CREATE_USERS_TABLE);
     }
 
@@ -66,7 +66,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_BIRTHDAY, user.getBirthdayStr()); // User Birthday (String)
 
         // Inserting Row
-        return db.insert(TABLE_USERS, null, values);
+        long result = db.insert(TABLE_USERS, null, values);
+
+        db.close();
+
+        return result;
     }
 
     // Getting single user
@@ -84,24 +88,27 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             null
         );
 
+        User user = new User();
+
         if (cursor != null) {
             cursor.moveToFirst();
+
+            user.setID(Integer.parseInt(cursor.getString(0)));
+            user.setName(cursor.getString(1));
+            user.setSurname(cursor.getString(2));
+            user.setBirthdayStr(cursor.getString(3));
+            cursor.close();
         }
 
-        User user = new User(
-            Integer.parseInt(cursor.getString(0)),
-            cursor.getString(1),
-            cursor.getString(2),
-            cursor.getString(3)
-        );
-
+        db.close();
         // return user
         return user;
     }
 
     // Getting All Users
     public List<User> getAllUsers() {
-        List<User> usersList = new ArrayList<User>();
+        List<User> usersList = new ArrayList<>();
+
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_USERS;
 
@@ -122,6 +129,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
+        cursor.close();
         db.close(); // Closing database connection
 
         // return users list
@@ -130,15 +138,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // Getting Users Count
     public int getUsersCount() {
-        String countQuery = "SELECT * FROM " + TABLE_USERS;
+        String countQuery = "SELECT COUNT(id) FROM " + TABLE_USERS;
         SQLiteDatabase db = this.getReadableDatabase();
+
         Cursor cursor = db.rawQuery(countQuery, null);
+        int result = cursor.getInt(0);
         cursor.close();
 
         db.close(); // Closing database connection
 
         // return count
-        return cursor.getCount();
+        return result;
     }
 
     // Updating single user
@@ -150,24 +160,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_SURNAME, user.getSurname());
         values.put(KEY_BIRTHDAY, user.getBirthdayStr());
 
-        // updating row
-        return db.update(
-            TABLE_USERS,
-            values,
-            KEY_ID + " = ?",
-            new String[] { String.valueOf(user.getID()) }
+        int result = db.update(
+                TABLE_USERS,
+                values,
+                KEY_ID + " = ?",
+                new String[] { String.valueOf(user.getID()) }
         );
+
+        db.close();
+
+        // updating row
+        return result;
     }
 
     // Deleting single user
-    public void deleteUser(User user) {
+    public int deleteUser(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(
+        int result = db.delete(
             TABLE_USERS,
             KEY_ID + " = ?",
             new String[] { String.valueOf(user.getID()) }
         );
         db.close();
+        return result;
     }
 
 }

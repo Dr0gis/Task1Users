@@ -8,12 +8,12 @@ import android.view.View;
 import android.widget.TextView;
 
 // Class for keeping links on elements widget, class used only for adapter
-public class UserHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
+public class UserHolder extends RecyclerView.ViewHolder {
 
     private TextView userNameTextView;
     private TextView userAgeTextView;
     private User user;
-    private int index;
+    public int index;
     private MainActivity mainActivity;
 
     public UserHolder(View itemView, MainActivity mainActivity) {
@@ -21,40 +21,7 @@ public class UserHolder extends RecyclerView.ViewHolder implements View.OnCreate
         userNameTextView = (TextView) itemView.findViewById(R.id.userNameView);
         userAgeTextView = (TextView) itemView.findViewById(R.id.userAgeView);
         this.mainActivity = mainActivity;
-        itemView.setOnCreateContextMenuListener(this);
-    }
-
-    // Contex menu / Items - Edit, Remove
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View itemView, ContextMenu.ContextMenuInfo menuInfo) {
-        MenuInflater inflater = mainActivity.getMenuInflater();
-        inflater.inflate(R.menu.menu_edit, menu);
-
-        int length = menu.size();
-        for (int index = 0; index < length; index++) {
-            MenuItem menuItem = menu.getItem(index);
-            menuItem.setOnMenuItemClickListener(this);
-        }
-
-    }
-
-    // Contex menu / Items - Edit, Remove
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.edit_option:
-                mainActivity.openEditActivity(MainActivity.EDIT_MESSAGE, user);
-                return true;
-
-            case R.id.remove_option:
-                mainActivity.removeItem(index, user.getID());
-                return true;
-
-            default:
-                return false;
-        }
-
+        itemView.setOnCreateContextMenuListener(mainActivity);
     }
 
     // A method that links references with data

@@ -53,59 +53,61 @@ public class User implements Serializable {
         this.age = calculateAge(this.birthday);
     }
 
+
     public int getID() {
         return id;
     }
-
     public void setID(int id) {
          this.id = id;
     }
 
+
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
 
+
     public String getSurname() {
         return surname;
     }
-
     public void setSurname(String surname) {
         this.surname = surname;
     }
 
+
     public Date getBirthday() {
         return birthday;
+    }
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+        age = calculateAge(birthday);
     }
 
     public String getBirthdayStr() {
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
         return df.format(birthday);
     }
-
     public void setBirthdayStr(String birthdayStr) {
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
         try {
             birthday = dateFormat.parse(birthdayStr);
+            age = calculateAge(birthday);
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
 
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
 
     public int getAge() {
         return age;
     }
-
     public void setAge(int age) {
         this.age = age;
     }
+
 
     public void setUser(User user) {
         this.id = user.id;
@@ -114,6 +116,7 @@ public class User implements Serializable {
         this.surname = user.surname;
         this.age = calculateAge(this.birthday);
     }
+
 
     // Calculate age by birthday
     private Integer calculateAge(final Date birthday) {
