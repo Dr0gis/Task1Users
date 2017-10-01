@@ -1,6 +1,6 @@
 package com.example.dr0gi.task1users;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,8 +12,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,8 +34,6 @@ public class MainActivity extends AppCompatActivity {
 
         usersRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewUsers);
         usersRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        registerForContextMenu(usersRecyclerView);
-        usersRecyclerView.setOnCreateContextMenuListener(MainActivity.this);
 
         MyApplication myApplication = (MyApplication) getApplicationContext();
 
@@ -66,39 +62,40 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Contex menu / Items - Edit, Remove
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View itemView, ContextMenu.ContextMenuInfo menuInfo) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_edit, menu);
+    //
+    public class ContextMenuRecyclerView implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
 
-        AdapterView.AdapterContextMenuInfo adapterContextMenuInfo = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        private int index;
 
-        int temp1 = adapterContextMenuInfo.position;
-        int temp2 = 0;
-        /*int length = menu.size();
-        for (int index = 0; index < length; index++) {
-            MenuItem menuItem = menu.getItem(index);
-            //menuItem.setOnMenuItemClickListener(MainActivity.this);
-        }*/
+        public ContextMenuRecyclerView(int index) {
+            this.index = index;
+        }
 
-    }
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            MenuInflater inflater = MainActivity.this.getMenuInflater();
+            inflater.inflate(R.menu.menu_edit, menu);
+            int length = menu.size();
+            for (int index = 0; index < length; index++) {
+                MenuItem menuItem = menu.getItem(index);
+                menuItem.setOnMenuItemClickListener(this);
+            }
+        }
 
-    // Contex menu / Items - Edit, Remove
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        switch (item.getItemId()) {
-            case R.id.edit_option:
-                openEditActivity(MainActivity.EDIT_MESSAGE, info.position);
-                return true;
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.edit_option:
+                    openEditActivity(MainActivity.EDIT_MESSAGE, index);
+                    return true;
 
-            case R.id.remove_option:
-                removeItem(info.position);
-                return true;
+                case R.id.remove_option:
+                    removeItem(index);
+                    return true;
 
-            default:
-                return false;
+                default:
+                    return false;
+            }
         }
     }
 

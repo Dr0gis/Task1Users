@@ -1,8 +1,6 @@
 package com.example.dr0gi.task1users;
 
-import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -10,24 +8,11 @@ import java.util.List;
 public class UsersController {
     private List<User> usersList;
     private DatabaseHandler db;
-    //private Context context;
 
     public UsersController(DatabaseHandler db) {
-        //this.context = context;
         this.db = db;
         usersList = db.getAllUsers();
     }
-
-    /*public int getPositionItem(int id) {
-        int k = 0;
-        for (User i : usersList) {
-            if (i.getID() == id) {
-                return k;
-            }
-            ++k;
-        }
-        return -1;
-    }*/
 
     public void addItem(User item, DatabaseHandler.OnDBOperationCompleted<Long> listener) {
         new addItemThread(listener).execute(item);

@@ -29,6 +29,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserHolder> {
     public void onBindViewHolder(UserHolder holder, int position) {
         User user = usersController.getItem(position);
         holder.bindData(user, position);
+        holder.setContextMenu();
     }
 
     @Override

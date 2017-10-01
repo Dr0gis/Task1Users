@@ -1,9 +1,6 @@
 package com.example.dr0gi.task1users;
 
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -21,7 +18,10 @@ public class UserHolder extends RecyclerView.ViewHolder {
         userNameTextView = (TextView) itemView.findViewById(R.id.userNameView);
         userAgeTextView = (TextView) itemView.findViewById(R.id.userAgeView);
         this.mainActivity = mainActivity;
-        itemView.setOnCreateContextMenuListener(mainActivity);
+    }
+
+    public void setContextMenu() {
+        itemView.setOnCreateContextMenuListener(mainActivity.new ContextMenuRecyclerView(index));
     }
 
     // A method that links references with data
