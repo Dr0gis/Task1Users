@@ -1,6 +1,5 @@
 package com.example.dr0gi.task1users;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,10 +35,8 @@ public class MainActivity extends AppCompatActivity {
         usersRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewUsers);
         usersRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        MyApplication myApplication = (MyApplication) getApplicationContext();
-
-        usersController = new UsersController(myApplication.getDataBaseConnect());
-        usersAdapter = new UserAdapter(usersController, this);
+        usersController = new UsersController(MyApplication.getInstance().getDb());
+        usersAdapter = new UserAdapter(MainActivity.this, usersController.getUsersList(), new ClickListener());
         usersRecyclerView.setAdapter(usersAdapter);
     }
 
@@ -48,8 +46,6 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
-    // Main menu / Items - Add
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -59,43 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    //
-    public class ContextMenuRecyclerView implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
-
-        private int index;
-
-        public ContextMenuRecyclerView(int index) {
-            this.index = index;
-        }
-
-        @Override
-        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            MenuInflater inflater = MainActivity.this.getMenuInflater();
-            inflater.inflate(R.menu.menu_edit, menu);
-            int length = menu.size();
-            for (int index = 0; index < length; index++) {
-                MenuItem menuItem = menu.getItem(index);
-                menuItem.setOnMenuItemClickListener(this);
-            }
-        }
-
-        @Override
-        public boolean onMenuItemClick(MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.edit_option:
-                    openEditActivity(MainActivity.EDIT_MESSAGE, index);
-                    return true;
-
-                case R.id.remove_option:
-                    removeItem(index);
-                    return true;
-
-                default:
-                    return false;
-            }
         }
     }
 
@@ -147,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
     // Edit item to Users
     private void itemEdit(User newUser) {
         usersController.updateItem(newUser, new DatabaseHandler.OnDBOperationCompleted<Integer>() {
@@ -172,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
     // Remove item to Users
     public void removeItem(final int index) {
         User user = usersController.getItem(index);
@@ -215,4 +172,47 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(CODE_MESSAGE, codeMessage);
         startActivityForResult(intent, codeMessage);
     }
+
+    private class ClickListener implements UserAdapter.UsersClickListener {
+        @Override
+        public void onUserLongClicked(int pos) {
+            Toast.makeText(MainActivity.this, Integer.toString(pos), Toast.LENGTH_SHORT).show();
+        }
+    }
+    public class ContextMenuRecyclerView implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
+
+        private int index;
+
+        public ContextMenuRecyclerView(int index) {
+            this.index = index;
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            MenuInflater inflater = MainActivity.this.getMenuInflater();
+            inflater.inflate(R.menu.menu_edit, menu);
+            int length = menu.size();
+            for (int index = 0; index < length; index++) {
+                MenuItem menuItem = menu.getItem(index);
+                menuItem.setOnMenuItemClickListener(this);
+            }
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.edit_option:
+                    openEditActivity(MainActivity.EDIT_MESSAGE, index);
+                    return true;
+
+                case R.id.remove_option:
+                    removeItem(index);
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+    }
+
 }

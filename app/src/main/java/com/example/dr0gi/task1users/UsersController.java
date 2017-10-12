@@ -15,21 +15,24 @@ public class UsersController {
     }
 
     public void addItem(User item, DatabaseHandler.OnDBOperationCompleted<Long> listener) {
-        new addItemThread(listener).execute(item);
+        new AddItemAsync(listener).execute(item);
     }
 
     public void removeItem(User user, DatabaseHandler.OnDBOperationCompleted<Integer> listener) {
-        new removeItemThread(listener).execute(user);
+        new RemoveItemAsync(listener).execute(user);
     }
 
     public void updateItem(User item, DatabaseHandler.OnDBOperationCompleted<Integer> listener) {
-        new updateItemThread(listener).execute(item);
+        new UpdateItemAsync(listener).execute(item);
     }
 
     public void updateUserList(DatabaseHandler.OnDBOperationCompleted<Boolean> listener) {
-        new updateUserListThread(listener).execute();
+        new UpdateUserListAsync(listener).execute();
     }
 
+    public List<User> getUsersList() {
+        return usersList;
+    }
 
     //For MainActivity (scroll to item)
     public int getLastIndex() {
@@ -45,11 +48,11 @@ public class UsersController {
     }
 
 
-    private class addItemThread extends AsyncTask<User, Void, Long> {
+    private class AddItemAsync extends AsyncTask<User, Void, Long> {
 
         private DatabaseHandler.OnDBOperationCompleted<Long> listener;
 
-        addItemThread(DatabaseHandler.OnDBOperationCompleted<Long> listener){
+        AddItemAsync(DatabaseHandler.OnDBOperationCompleted<Long> listener){
             this.listener = listener;
         }
 
@@ -72,11 +75,11 @@ public class UsersController {
 
     }
 
-    private class removeItemThread extends AsyncTask<User, Void, Integer> {
+    private class RemoveItemAsync extends AsyncTask<User, Void, Integer> {
 
         private DatabaseHandler.OnDBOperationCompleted<Integer> listener;
 
-        removeItemThread(DatabaseHandler.OnDBOperationCompleted<Integer> listener) {
+        RemoveItemAsync(DatabaseHandler.OnDBOperationCompleted<Integer> listener) {
             this.listener = listener;
         }
 
@@ -99,11 +102,11 @@ public class UsersController {
 
     }
 
-    private class updateItemThread extends AsyncTask<User, Void, Integer> {
+    private class UpdateItemAsync extends AsyncTask<User, Void, Integer> {
 
         private DatabaseHandler.OnDBOperationCompleted<Integer> listener;
 
-        updateItemThread(DatabaseHandler.OnDBOperationCompleted<Integer> listener){
+        UpdateItemAsync(DatabaseHandler.OnDBOperationCompleted<Integer> listener){
             this.listener = listener;
         }
 
@@ -126,11 +129,11 @@ public class UsersController {
 
     }
 
-    private class updateUserListThread extends AsyncTask<Void, Void, Boolean> {
+    private class UpdateUserListAsync extends AsyncTask<Void, Void, Boolean> {
 
         private DatabaseHandler.OnDBOperationCompleted<Boolean> listener;
 
-        updateUserListThread(DatabaseHandler.OnDBOperationCompleted<Boolean> listener) {
+        UpdateUserListAsync(DatabaseHandler.OnDBOperationCompleted<Boolean> listener) {
             this.listener = listener;
         }
 
