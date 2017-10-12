@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class User implements Serializable {
-    private int id;
+    private long id;
     private String name;
     private String surname;
     private Date birthday;
@@ -23,7 +23,7 @@ public class User implements Serializable {
         this.age = calculateAge(this.birthday);
     }
 
-    public User(int id, String name, String surname, Date birthday) {
+    public User(long id, String name, String surname, Date birthday) {
         this.id = id;
         this.name = name;
         this.birthday = birthday;
@@ -31,7 +31,7 @@ public class User implements Serializable {
         this.age = calculateAge(this.birthday);
     }
 
-    public User(int id, String name, String surname, String birthdayStr) {
+    public User(long id, String name, String surname, String birthdayStr) {
         this.id = id;
         this.name = name;
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
@@ -54,10 +54,10 @@ public class User implements Serializable {
     }
 
 
-    public int getID() {
+    public long getID() {
         return id;
     }
-    public void setID(int id) {
+    public void setID(long id) {
          this.id = id;
     }
 

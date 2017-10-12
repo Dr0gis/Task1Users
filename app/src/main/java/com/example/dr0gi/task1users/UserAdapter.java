@@ -17,7 +17,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
     private Context context;
 
     public interface UsersClickListener{
-        void onUserLongClicked(int pos);
+        void onUserLongClicked(View view, int pos);
     }
 
     public UserAdapter(Context context, List<User> users, UsersClickListener listener) {
@@ -56,7 +56,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    listener.onUserLongClicked(getAdapterPosition());
+                    listener.onUserLongClicked(v, getAdapterPosition());
                     return false;
                 }
             });

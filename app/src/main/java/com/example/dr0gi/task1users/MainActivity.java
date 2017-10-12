@@ -86,23 +86,13 @@ public class MainActivity extends AppCompatActivity {
         usersController.addItem(newUser, new DatabaseHandler.OnDBOperationCompleted<Long>() {
             @Override
             public void onSuccess(Long result) {
-                usersController.updateUserList(new DatabaseHandler.OnDBOperationCompleted<Boolean>() {
-                    @Override
-                    public void onSuccess(Boolean result) {
-                        usersAdapter.notifyItemInserted(usersController.getLastIndex());
-                        usersRecyclerView.smoothScrollToPosition(usersController.getLastIndex());
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
+                usersAdapter.notifyItemInserted(usersController.getLastIndex());
+                usersRecyclerView.smoothScrollToPosition(usersController.getLastIndex());
             }
 
             @Override
             public void onError() {
-
+                Toast.makeText(MainActivity.this, "Adding error", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -111,22 +101,12 @@ public class MainActivity extends AppCompatActivity {
         usersController.updateItem(newUser, new DatabaseHandler.OnDBOperationCompleted<Integer>() {
             @Override
             public void onSuccess(Integer result) {
-                usersController.updateUserList(new DatabaseHandler.OnDBOperationCompleted<Boolean>() {
-                    @Override
-                    public void onSuccess(Boolean result) {
-                        usersAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
+                usersAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onError() {
-
+                Toast.makeText(MainActivity.this, "Editing error", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -136,23 +116,12 @@ public class MainActivity extends AppCompatActivity {
         usersController.removeItem(user, new DatabaseHandler.OnDBOperationCompleted<Integer>() {
             @Override
             public void onSuccess(Integer result) {
-                usersController.updateUserList(new DatabaseHandler.OnDBOperationCompleted<Boolean>() {
-                    @Override
-                    public void onSuccess(Boolean result) {
-                        usersAdapter.notifyItemRemoved(index);
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-
+                usersAdapter.notifyItemRemoved(index);
             }
 
             @Override
             public void onError() {
-
+                Toast.makeText(MainActivity.this, "Removing error", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -175,12 +144,12 @@ public class MainActivity extends AppCompatActivity {
 
     private class ClickListener implements UserAdapter.UsersClickListener {
         @Override
-        public void onUserLongClicked(int pos) {
-            Toast.makeText(MainActivity.this, Integer.toString(pos), Toast.LENGTH_SHORT).show();
+        public void onUserLongClicked(View v, int pos) {
+            v.setOnCreateContextMenuListener(new ContextMenuRecyclerView(pos));
         }
     }
-    public class ContextMenuRecyclerView implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
 
+    public class ContextMenuRecyclerView implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
         private int index;
 
         public ContextMenuRecyclerView(int index) {
